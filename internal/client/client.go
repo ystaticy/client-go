@@ -57,6 +57,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/tikv/client-go/v2/config"
 	tikverr "github.com/tikv/client-go/v2/error"
+	"github.com/tikv/client-go/v2/internal/apicodec"
 	"github.com/tikv/client-go/v2/internal/logutil"
 	"github.com/tikv/client-go/v2/metrics"
 	"github.com/tikv/client-go/v2/tikvrpc"
@@ -259,6 +260,7 @@ type option struct {
 	gRPCDialOptions []grpc.DialOption
 	security        config.Security
 	dialTimeout     time.Duration
+	codec           apicodec.Codec
 }
 
 // Opt is the option for the client.
@@ -275,6 +277,13 @@ func WithSecurity(security config.Security) Opt {
 func WithGRPCDialOptions(grpcDialOptions ...grpc.DialOption) Opt {
 	return func(c *option) {
 		c.gRPCDialOptions = grpcDialOptions
+	}
+}
+
+// WithCodec is used to set RPCClient's codec.
+func WithCodec(codec apicodec.Codec) Opt {
+	return func(c *option) {
+		c.codec = codec
 	}
 }
 
@@ -534,7 +543,11 @@ func (c *RPCClient) sendRequest(ctx context.Context, addr string, req *tikvrpc.R
 
 // SendRequest sends a Request to server and receives Response.
 func (c *RPCClient) SendRequest(ctx context.Context, addr string, req *tikvrpc.Request, timeout time.Duration) (*tikvrpc.Response, error) {
-	req, err := EncodeRequest(req)
+	if c.option == nil || c.option.codec == nil || req.StoreTp == tikvrpc.TiFlash {
+		return c.sendRequest(ctx, addr, req, timeout)
+	}
+
+	req, err := c.option.codec.EncodeRequest(req)
 	if err != nil {
 		return nil, err
 	}
@@ -542,7 +555,7 @@ func (c *RPCClient) SendRequest(ctx context.Context, addr string, req *tikvrpc.R
 	if err != nil {
 		return nil, err
 	}
-	return DecodeResponse(req, resp)
+	return c.option.codec.DecodeResponse(req, resp)
 }
 
 func (c *RPCClient) getCopStreamResponse(ctx context.Context, client tikvpb.TikvClient, req *tikvrpc.Request, timeout time.Duration, connArray *connArray) (*tikvrpc.Response, error) {
