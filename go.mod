@@ -61,3 +61,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	stathat.com/c/consistent v1.0.0 // indirect
 )
+
+replace github.com/pingcap/kvproto => github.com/tidbcloud/kvproto v0.0.0-20230305080308-953564a883bd
+
+replace github.com/tikv/pd/client => github.com/tidbcloud/pd-cse/client v0.0.0-20230227123712-5119e091def6
