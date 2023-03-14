@@ -62,6 +62,6 @@ require (
 	stathat.com/c/consistent v1.0.0 // indirect
 )
 
-replace github.com/pingcap/kvproto => github.com/tidbcloud/kvproto v0.0.0-20230305080308-953564a883bd
+replace github.com/pingcap/kvproto => github.com/tidbcloud/kvproto v0.0.0-20230314071356-ede8ef250f4f
 
-replace github.com/tikv/pd/client => github.com/tidbcloud/pd-cse/client v0.0.0-20230227123712-5119e091def6
+replace github.com/tikv/pd/client => github.com/tidbcloud/pd-cse/client v0.0.0-20230314083701-071f222e87f4

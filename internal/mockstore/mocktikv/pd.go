@@ -75,12 +75,12 @@ func (c *pdClient) GetGCSafePointV2(ctx context.Context, keyspaceID uint32) (uin
 	panic("implement me")
 }
 
-func (c *pdClient) UpdateGCSafePointV2(ctx context.Context, keyspaceID uint32, safePoint uint64) error {
+func (c *pdClient) UpdateGCSafePointV2(ctx context.Context, keyspaceID uint32, safePoint uint64) (uint64, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c *pdClient) UpdateServiceSafePointV2(ctx context.Context, keyspaceID uint32, serviceID string, ttl int64, safePoint uint64) error {
+func (c *pdClient) UpdateServiceSafePointV2(ctx context.Context, keyspaceID uint32, serviceID string, ttl int64, safePoint uint64) (uint64, error) {
 	//TODO implement me
 	panic("implement me")
 }
